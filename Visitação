@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Visitação Marketing Profissional</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: #EFF2F5;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 2rem auto;
+      background: white;
+      min-height: 90vh;
+      border-radius: 16px;
+      box-shadow: 0 0 30px rgba(0,0,0,0.05);
+      overflow: hidden;
+    }
+    h1 {
+      color: #1E2A3A;
+      text-align: center;
+      padding: 2rem 2rem 1rem;
+      margin: 0;
+      font-weight: 600;
+      font-size: 1.5rem;
+    }
+    .tabs {
+      display: flex;
+      background: #F8FAFC;
+      padding: 0 2rem;
+      border-bottom: 1px solid #E2E8F0;
+      border-radius: 16px 16px 0 0;
+    }
+    .tab-button {
+      padding: 16px 24px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-weight: 500;
+      color: #64748B;
+      font-size: 14px;
+      transition: all 0.2s;
+      position: relative;
+    }
+    .tab-button:hover,
+    .tab-button.active {
+      color: #2563EB;
+    }
+    .tab-button.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: #2563EB;
+    }
+    .tab-content {
+      padding: 0 2rem 2rem;
+    }
+    .form-group {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2rem;
+      margin-bottom: 2rem;
+      padding: 1rem;
+    }
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .form-field label {
+      font-size: 14px;
+      color: #64748B;
+      font-weight: 500;
+    }
+    input {
+      padding: 14px 16px;
+      border: 1px solid #D1D9E6;
+      border-radius: 8px;
+      font-size: 15px;
+      transition: all 0.2s;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    input:focus {
+      outline: none;
+      border-color: #3498db;
+      box-shadow: 0 0 0 3px rgba(52,152,219,0.2);
+    }
+    .name {
+      background: #F0F7FF;
+      color: #1E5D9E;
+      border-color: #B8D6F7;
+    }
+    .email {
+      background: #F8FAFC;
+      color: #334155;
+      border-color: #E2E8F0;
+    }
+    .cpf {
+      background: #F1F5F9;
+      color: #64748B;
+      border-color: #CBD5E1;
+    }
+    .pacCoupon {
+      background: white;
+      color: #1E293B;
+      border: 1px solid #E2E8F0;
+    }
+    button {
+      padding: 16px 24px;
+      background: #2563EB;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: block;
+      width: 100%;
+      margin-top: 0.5rem;
+    }
+    button:hover {
+      background: #27ae60;
+      transform: translateY(-2px);
+    }
+    .small-btn {
+      padding: 8px 12px;
+      background: #e74c3c;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .small-btn:hover {
+      background-color: #c0392b;
+    }
+    .export-btn {
+      padding: 10px 16px;
+      background: #10b981;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    .export-btn:hover {
+      background: #059669;
+    }
+    .import-btn {
+      padding: 16px 24px;
+      background: #3B82F6;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 1rem;
+      display: block;
+      width: 100%;
+    }
+    .import-btn:hover {
+      background: #2563EB;
+    }
+    .import-form {
+      padding: 1rem;
+      background: #F8FAFC;
+      border-radius: 8px;
+      margin: 1rem 0;
+    }
+    #userList {
+      margin-top: 2rem;
+      border-top: 1px solid #eee;
+      padding-top: 1rem;
+    }
+    .user-card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .user-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+    }
+    .user-actions button {
+      width: auto;
+      margin-left: 1rem;
+    }
+    .database-container {
+      margin-top: 2rem;
+    }
+    .table-responsive {
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 16px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+    th {
+      background-color: #f8f9fa;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Visitação Marketing Profissional</h1>
+    <div class="tabs">
+      <button class="tab-button active" onclick="showTab('registration')">
+        <i class="fas fa-user-edit"></i> Cadastro
+      </button>
+      <button class="tab-button" onclick="showTab('database')">
+        <i class="fas fa-database"></i> Base de Cadastros
+      </button>
+      <button class="tab-button" onclick="showTab('import')">
+        <i class="fas fa-file-import"></i> Importar Cupons
+      </button>
+    </div>
+
+    <!-- Aba de Cadastro -->
+    <div id="registration-tab" class="tab-content">
+      <div class="form-group">
+        <div class="form-field">
+          <label for="name">Nome Completo</label>
+          <input type="text" class="name" id="name" placeholder="Digite o nome completo" required />
+        </div>
+        <div class="form-field">
+          <label for="email">Email</label>
+          <input type="email" class="email" id="email" placeholder="seu@email.com" required />
+        </div>
+        <div class="form-field">
+          <label for="cpf">CPF</label>
+          <input type="text" class="cpf" id="cpf" placeholder="Somente números" required />
+        </div>
+        <div class="form-field">
+          <label for="pacCoupon">Cupom PAC</label>
+          <input type="text" class="pacCoupon" id="pacCoupon" placeholder="Código do cupom" required />
+        </div>
+      </div>
+      <button onclick="addUser ()">
+        <i class="fas fa-save"></i> Cadastrar Usuário
+      </button>
+      <div id="userList"></div>
+    </div>
+
+    <!-- Aba de Base de Dados -->
+    <div id="database-tab" class="tab-content" style="display: none;">
+      <div class="database-container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <h2>Base Completa de Cadastros</h2>
+          <button onclick="exportToExcel()" class="export-btn">
+            <i class="fas fa-file-export"></i> Exportar para Excel
+          </button>
+        </div>
+        <div class="table-responsive">
+          <table id="databaseTable">
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>CPF</th>
+                <th>Cupom PAC</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Aba de Importação -->
+    <div id="import-tab" class="tab-content" style="display: none;">
+      <div class="database-container">
+        <h2>Importar Cupons</h2>
+        <div class="import-form">
+          <input type="file" id="excelFile" accept=".xlsx, .xls, .csv" />
+          <button onclick="importFromExcel()" class="import-btn">
+            <i class="fas fa-file-import"></i> Importar Cupons
+          </button>
+          <div id="importResults"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function formatCPF(cpf) {
+      return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+    }
+
+    async function deleteUser (id) {
+      if (confirm('Deseja realmente excluir este usuário?')) {
+        await fetch(`http://localhost:5000/api/users/${id}`, {
+          method: 'DELETE'
+        });
+        loadUsers();
+        loadDatabase();
+      }
+    }
+
+    async function addUser () {
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const cpf = document.getElementById('cpf').value;
+      const pacCoupon = document.getElementById('pacCoupon').value;
+
+      const response = await fetch('http://localhost:5000/api/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ name, email, cpf, pacCoupon })
+      });
+
+      const data = await response.json();
+      if (response.status === 201) {
+        alert('Usuário cadastrado com sucesso!');
+        loadUsers();
+      } else {
+        alert(data.message);
+      }
+    }
+
+    async function loadUsers() {
+      const response = await fetch('http://localhost:5000/api/users');
+      const users = await response.json();
+      const userList = document.getElementById('userList');
+      userList.innerHTML = '<h2>Usuários Cadastrados</h2>';
+      if (users.length === 0) {
+        userList.innerHTML += '<p class="empty-message">Nenhum usuário cadastrado ainda.</p>';
+      } else {
+        users.forEach(user => {
+          userList.innerHTML += `
+            <div class="user-card">
+              <div class="user-info">
+                <h3>${user.name}</h3>
+                <p>Email: ${user.email}</p>
+                <p>CPF: ${formatCPF(user.cpf)} | PAC: ${user.pacCoupon}</p>
+              </div>
+              <div class="user-actions">
+                <button onclick="deleteUser ('${user._id}')">
+                  <i class="fas fa-trash"></i> Excluir
+                </button>
+              </div>
+            </div>`;
+        });
+      }
+    }
+
+    function showTab(tabName) {
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.style.display = 'none';
+      });
+      document.querySelectorAll('.tab-button').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      
+      document.getElementById(tabName + '-tab').style.display = 'block';
+      document.querySelector(`.tab-button[onclick="showTab('${tabName}')"]`).classList.add('active');
+      
+      if (tabName === 'database') {
+        loadDatabase();
+      }
+    }
+
+    async function loadDatabase() {
+      const response = await fetch('http://localhost:5000/api/users');
+      const users = await response.json();
+      const tbody = document.querySelector('#databaseTable tbody');
+      tbody.innerHTML = '';
+      
+      users.forEach(user => {
+        tbody.innerHTML += `
+          <tr>
+            <td>${user.name}</td>
+            <td>${user.email}</td>
+            <td>${formatCPF(user.cpf)}</td>
+            <td>${user.pacCoupon}</td>
+            <td>
+              <button onclick="deleteUser ('${user._id}')" class="small-btn">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          </tr>`;
+      });
+    }
+
+    function readExcelFile(file) {
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const data = new Uint8Array(e.target.result);
+          const workbook = XLSX.read(data, { type: 'array' });
+          resolve(workbook);
+        };
+        reader.readAsArrayBuffer(file);
+      });
+    }
+
+    async function importFromExcel() {
+      const fileInput = document.getElementById('excelFile');
+      if (!fileInput.files.length) {
+        alert('Selecione um arquivo Excel primeiro');
+        return;
+      }
+
+      const workbook = await readExcelFile(fileInput.files[0]);
+      const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+      const jsonData = XLSX.utils.sheet_to_json(firstSheet);
+      
+      // Process coupons
+      let successCount = 0;
+      let errorCount = 0;
+      
+      for (const row of jsonData) {
+        try {
+          const response = await fetch('http://localhost:5000/api/coupons', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              couponCode: row.cupom || row.cupom_pac || row.cupon,
+              createdAt: new Date().toISOString()
+            })
+          });
+          
+          if (response.ok) {
+            successCount++;
+          } else {
+            errorCount++;
+          }
+        } catch (err) {
+          errorCount++;
+        }
+      }
+      
+      document.getElementById('importResults').innerHTML = `
+        <p>Importação concluída!</p>
+        <p>Cupons adicionados: ${successCount}</p>
+        <p>Erros: ${errorCount}</p>
+      `;
+    }
+
+    function exportToExcel() {
+      const table = document.getElementById('databaseTable');
+      const html = table.outerHTML;
+      const url = 'data:application/vnd.ms-excel;charset=utf-8,' + encodeURIComponent(html);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'cadastros.xls';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    window.onload = () => {
+      loadUsers();
+      showTab('registration');
+    };
+  </script>
+</body>
+</html>
